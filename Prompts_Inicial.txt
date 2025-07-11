@@ -1,0 +1,193 @@
+
+
+quiero hacer una app de turismo solo para Sevilla, anteriormente he desarrollado una en android, usando google maps, places, directions, geocoding y conectandola con spring java, ahora la quiero hacer lo más rapido posible no se si usar android o react native, y de backeend no se si usar spring ó firebase o la q sea mas rapida y práctica
+
+-- instaladores
+
+npm install -g expo-cli
+
+
+-- Crear tu proyecto
+
+npx create-expo-app sevillaApp
+cd sevillaApp
+npm start
+
+
+Funcionalidades mínimas (MVP) según este diagrama:
+
+Home
+
+	*Ver búsquedas recientes, perfil, favoritos
+	*Acceso a configuración
+	*Explore
+
+	*Lista de categorías
+	*Lista de lugares por categoría
+	*Vista detalle de lugar con opción "Ver en Google Maps"
+
+Mapa
+
+	*Ver lugares con marcadores
+	*Filtros por categoría
+
+Agregar lugar (opcional en MVP)
+
+
+                    +------------------+
+                    |     Home (🏠)     |
+                    |------------------|
+                    | Últimas búsquedas|
+                    | Perfil usuario   |
+                    | Favoritos        |
+                    +--------+---------+
+                             |
+                             v
+                 +------------------------+
+                 |     Configuración 🛠️     |
+                 +------------------------+
+
+         +----------------+        +------------------+
+         |  Explore (🔍)   | -----> |   Categorías      |
+         |----------------|        |------------------|
+         | Lista de sitios|        | - Monumentos     |
+         | recomendados   |        | - Museos         |
+         |                |        | - Tapas y bares  |
+         +----------------+        | - Parques        |
+                                   +--------+---------+
+                                            |
+                                            v
+                                +-------------------------+
+                                |   Detalle de un lugar   |
+                                |-------------------------|
+                                | Fotos, descripción, etc |
+                                | Botón: Navegar con Maps |
+                                +-----------+-------------+
+                                            |
+                                            v
+                               (Abre Google Maps con intent)
+
+         +----------------+ 
+         |   Mapa (🗺️)     |
+         |----------------|
+         | Marker de sitios|
+         | Filtrar por cat |
+         | Añadir lugar +  |
+         +----------------+
+
+
+
+app/(tabs)/index.tsx → Home: búsquedas, favoritos, ajustes
+
+app/(tabs)/explore.tsx → Vista de exploración con categorías
+
+app/categories/[category].tsx → Lugares filtrados por categoría
+
+app/place/[id].tsx → Detalle de un lugar, botón "Navegar"
+
+app/(tabs)/map.tsx → Mapa con marcadores y filtro
+
+
+Estructura base del proyecto (/app)
+/app
+├── (tabs)
+│   ├── _layout.tsx               # Contenedor de navegación por pestañas
+│   ├── index.tsx                 # Pantalla Home
+│   ├── explore.tsx               # Pantalla de exploración
+│   ├── map.tsx                   # Pantalla con el mapa
+│
+├── categories
+│   ├── [category].tsx            # Lista de lugares por categoría (dinámico)
+│
+├── place
+│   ├── [id].tsx                  # Detalle de un lugar específico
+│
+├── config.tsx                    # Pantalla de configuración (opcional)
+└── +not-found.tsx                # Ruta 404
+
+
+
+
+
+Estructura general del proyecto
+
+/assets
+├── fonts/
+├── images/
+│   ├── icons/
+│   └── mock-places/
+
+/components
+├── PlaceCard.tsx
+├── CategoryFilter.tsx
+├── PlaceMarker.tsx
+├── Header.tsx
+└── ...otros reutilizables
+
+/constants
+├── categories.ts
+├── mockData.ts                   # Lugares mock antes de usar API real
+
+/hooks
+├── usePlaces.ts                  # Hook para obtener lugares (mock/API)
+
+/utils
+├── navigation.ts
+├── openInGoogleMaps.ts
+
+
+Base de datos en Local (Similiar a Room)
+
+Opción 3: realm (orientado a objetos, potente como Room)
+
+¿Qué usar en esta app?
+Necesitas   Opción recomendada
+Cargar datos offline    expo-sqlite o realm // Opción 3: realm (orientado a objetos, potente como Room)
+Guardar favoritos/locales   mmkv o sqlite
+Rápido + simple react-native-mmkv
+Complejo y estructurado realm o expo-sqlite
+
+// entorno cuando ya tengamos UI
+
+EAS Build
+
+¿Qué es EAS Build?
+
+Es como una "fábrica de apps en la nube" de Expo.
+
+Te permite:
+
+    Generar APK reales firmadas
+
+    Usar librerías nativas como Realm
+
+    Subir tu app a Google Play
+
+    Probar en dispositivos reales sin Expo Go
+
+🔧 Flujo profesional con EAS:
+
+    Instalas EAS:
+
+npm install -g eas-cli
+eas login
+
+Inicializas configuración:
+
+eas build:configure
+
+Cuando estés listo para probar tu app con Realm y otras librerías nativas:
+
+eas build -p android --profile preview
+
+Te da un APK para instalar en el móvil directamente (como en Android Studio)
+
+
+
+-- Y si no quiero usar EAS?
+
+Entonces debes hacer esto:
+
+    Ejectar tu proyecto con:
+
+npx expo eject
